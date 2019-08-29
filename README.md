@@ -12,6 +12,7 @@ Take still images of objects from the apartment with the NVIDIA TX2 camera, run 
 
 
 
+
 DATA: 
  
 I collected 20 small objects from around my apartment that would fit within the field of view of the NVIDIA TX2 camera.  Objects were various shapes, colors, and materials.  Half of the objects were recyclable, and the other half were not.  Ten pictures were taken of each object, so that different perspectives were captured of the same object.  A total of 200 Test Images were created, half were in the 'Recyclable' category and half were in the 'Non-Recyclable' category.  The steps in the following 'PROCESSING STEPS FOR PROJECT' indicate how the images were taken. 
@@ -20,6 +21,7 @@ I collected 20 small objects from around my apartment that would fit within the 
 
 		/home/learner/Documents/datasets_objects/nonrecycle_recycle/test/nonrecycle
 		/home/learner/Documents/datasets_objects/nonrecycle_recycle/test/recycle	
+
 
 
 
@@ -49,6 +51,7 @@ PROCESSING STEPS FOR PROJECT:
       - A Terminal window was then opened to the same location as the 'demo.py' script, and in the command line, entered, 'python3 demo.py'.  When the 'demo.py' file was executed, all 200 staged Test images were then processed, examined, and then logged into an Excel spreadsheet for analysis, 'Analysis_Resnet18_8_15_2019.xlsx'
 
       NOTE:  Processing all 200 Test images took approximately 3 minutes. Since a project requirement was to have a processing time of under 2 minutes, only 100 Test images (50% of the 'recyclable' category and 50% of the 'non-recyclable' category) are currently found in the image input staging directory ('Images_Input').  Processing 100 of the Test images takes approximately 1 minute and 30 seconds
+
 
 
 
@@ -82,6 +85,7 @@ On the 'Pivot_Table_Orientation' tab, all images are organized by their picture 
 
 
 
+
 CONCLUSION:  
 
 The results from this experiment indicate that a higher certainty percentage determined by the 'resnet-18' network could lead to higher percentages of images correctly identified.  However, more images and other 'Percentage' categories should be examined, instead of just the data extremes (low end and high end of percentages).  Also, other DNN networks should be examined, along with different objects to see if this trend is the same.
@@ -92,9 +96,11 @@ Based on this simple experiment, one cannot make any sweeping generalizations ab
 
 
 
+
 IMPROVEMENTS / IDEAS FOR ADDITIONAL PROJECTS:
 
 During this process, I also collected 'Recyclable' and 'Non-Recyclable' images for Validation and Training (\home\learner\Documents\datasets_objects\nonrecycle_recycle), and 'retrained' the resnet-18 network to create a new model (\home\learner\Documents\datasets_objects\nonrecycle_recycle\resnet18.onnx).  A group pictures of objects for Validation and Training can be seen in the images on Github ('Group_NonRecycle_Training_Validation.JPG' and 'Group_Recycle_Training_Validation.JPG').  Given more time, it would be interesting to run the 200 Test Images that were collected against the retrained model, and determine if the model correctly identifies an object as 'Recyclable' or 'Non-Recyclable'.  The idea is that this could be the first step to a larger project or tool, where a person could take a picture of an object in their house, indicate the municipality that they live in, and then have the image compared to a master database, and be informed if the object can be recycled in their municipality
+
 
 
 
