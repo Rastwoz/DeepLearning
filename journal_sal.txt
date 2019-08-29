@@ -1,0 +1,433 @@
+JOURNAL
+==============================================================================================
+
+This journal documents my thoughts, progress, issues and resolutions for the NVIDIA Jeston TX2 assignment
+==============================================================================================
+
+
+
+7/30/2019
+
+After my interview, I received a box with a NVIDIA Jetson TX2 board, which is essentially a Raspberry Pi board on steroids.  The last time I worked with anything close to this, it was way back during my undergraduate years for an introduction to electronics course elective, where we built simple connections on boards to light up LEDs and such.  I started reading content on NVIDIA sites related to Jetson products to learn more about this board, what other projects people have created with it, and brainstorming ideas for my own project.
+
+
+Helpful Links:
+
+YouTube - JetsonHacks - Jetson TX2 Unbox and Demo
+https://www.youtube.com/watch?v=kl2rMlHde4k
+
+NVIDIA - Two Days to a Demo
+https://developer.nvidia.com/embedded/twodaystoademo#hello_ai_world
+
+NVIDIA - Jetson Projects
+https://developer.nvidia.com/embedded/community/jetson-projects
+
+NVIDIA - Jetson Projects Posted by Individuals
+https://devtalk.nvidia.com/default/board/372/jetson-projects/
+
+NVIDIA - Getting Started with Jetson Nano Developer Kit
+https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#next
+==============================================================================================
+
+
+
+7/31/2019
+
+The NVIDIA board already was flashed with SDK JetPack 4.2 when I received it, so I didn't need to 'format' the board or anything like that.  No SD cards necessary for this project.  Continued reading on projects others have created and hosted on Github, and other content posted by NVIDIA on what the Jetson TX2 can do.  
+==============================================================================================
+
+
+
+8/1/2019
+
+I've come up with a few ideas on projects that involve machine learning and neural networks.  I'll continue to brainstorm additional ideas and figure out how to scope the ones below to create something within the given amount of time.
+
+  - An image recognition network that can distinguish if an object is recyclable or not from a still image.  An object that is recyclable in Fairfax City, might not be recyclable in Fairfax County because of different processes.  Sometimes a text list works to let someone know what is recyclable, and sometimes there is an image above a recycle bin that includes examples, but an image recognition systems would be more through and based on a master database of Yes and No items for those borderline/unknown cases.  It would be neat for a user to take a picture from their phone (or turn their camera on and point it at the object), enter in their municipality, and then get feedback which recognizes their item, and indicates if it can be recycled or not in their municipality
+
+  - A live camera tool, or still image tool, that is able to recognize how pieces for an unfinished puzzle fit together.  A picture of a completed puzzle would be divided up into columns and rows with letters across and numbers down.  Then, individually scan each puzzle piece picture side up, and spread all of the puzzle pieces around, picture side up.  A live camera feed with AI would then recognize the puzzle pieces with a highlighted box around each piece, and have it apply the appropriate tag for each piece.  The tag for each piece would have the column and row it belongs in, like 'A1'or 'E6' (like as seen with the YOLO tool).  Start with a simple child's puzzle (6-20 pieces) for this project to keep the scale small.  The 'A1' piece would be go in the upper right-hand corner, and work from there
+
+  - An image recognition network that will tell you what kind of tick you are looking at from a still image to identify ticks prone to carrying diseases
+
+  - A live camera tool (or from a still image), to pick out and highlight a desired object (or objects) in a messy room (looking for something, but can't find it in a cluttered closet or garage).  For example, if I want to find a step ladder in the garage, sweeping the camera across the messy garage until the step ladder is highlighted and framed with a tag identifying 'Step Ladder'
+
+
+Helpful Links:
+
+Cornell Tech - Jigsolved: Computer Vision to Solve Jigsaw Puzzles
+https://medium.com/cornell-tech/jigsolved-computer-vision-to-solve-jigsaw-puzzles-70b8ad8099e5
+
+YouTube - TED-How computers learn to recognize objects instantly
+https://www.youtube.com/watch?v=Cgxsv1riJhI
+==============================================================================================
+
+
+
+8/3/2019
+
+Most of what I read from other people who created AI projects with a Jetson board (and had no previous experience with AI), indicated that walking through NVIDIA's 'Hello AI World' exercise was very helpful to them and highly recommended to start there before beginning a personal project.  So, I started stepping through the NVIDIA Hello AI Exercise.  I completed all the way through the 'Compiling the Project' today.  During the set-up, I selected about 10 of the listed Neural Networks available since there was enough room on the board.  I also selected the PyTorch v1.1.0 Python 3.6 during the setup***.  I also set-up a Github account today.
+
+No new project ideas from brainstorming.  With that, I decided to go with my recycling object recognition idea.  At this point, I'm not sure if my entire idea will be realized and achieved by the end of two weeks.  However, I do want to do something with identification or classification of objects that can be recycled.  As I'm going through the Hello AI World process, I'll have to consider scope, and determine how best to apply what I have learned to my recycling identification idea.
+
+
+Helpful Links:
+
+Github - NVIDIA - Deploying Deep Learning Homepage
+https://github.com/dusty-nv/jetson-inference
+
+Github - NVIDIA - Hello AI World - Building the Project from Source
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/building-repo-2.md
+
+***NOTE:  See journal entry on 8/9.  I thought I had installed PyTorch at this point, but I discovered later on 8/9 that I had not installed it, because I clicked 'OK' on the install window without selecting a PyTorch version with the spacebar
+==============================================================================================
+
+
+
+8/4/2019
+
+Picked up on the NVIDA 'Hello AI World Exercise' while experimenting with the camera.  Today I turned on the camera to recognize objects I had around the room, with the 'googlenet' neural network.  Most of the objects I had in the room were not accurately classified to what they were.  For example, a wooden turtle was at most 50-60% as 'loafer' sometimes showing 'boot' or 'sweet potato'.  Rotating the object to different angles would give different labels as to what the network thought it was.  There was one specific tilt which would ID it as 'terrapin' at around 29%.  I also added more lights to the camera viewing area to reduce shadows.  The original image from the camera came in upside down, and resolving this issue took some time with lots of trial and error.
+
+
+ISSUE:  When turning on the camera for the NVIDIA Jetson TX2 the image from the camera was showing as upside down.  
+
+RESOLUTION:  To change the camera view to right side up, edited the 'gstCamera.cpp' file (line 416) so that both const int flipMethod = 0.  The second one was originally set to '2'.  The working lines in the 'gstCamera.cpp' looked like this:
+
+	#if NV_TENSORRT_MAJOR > 1 && NV_TENSORRT_MAJOR < 5       // if JetPack 3.1-3.3 (different flip-method)
+		const int flipMethod = 0;
+	#else
+		const int flipMethod = 0;
+	#end if
+
+After editing the file 'gstCamera.cpp' file, the code had to be recompiled from the 'Hello/jetson-inference/build' directory with 'make' command, followed by 'sudo make install' command
+
+
+Helpful Links:
+
+YouTube - Explaining Computers - Setting up NVIDIA Hello AI exercises to recognize images from live camera for a Jetson Nano
+https://www.youtube.com/watch?v=k5pXXmTkPNM
+NOTE:  My NVIDIA Jetson TX2 already has a camera, so didn't need a Raspberry Pi camera shown in the video, but turned on the camera the same way as done in the video
+
+YouTube - Tutorial Linux - Quick Refresher on VIM for simple editing and navigation
+https://www.youtube.com/watch?v=ggSyF1SVFr4
+
+JetsonHacks - Developing for NVIDIA Jetson
+https://www.jetsonhacks.com/
+
+NVIDA Forum to resolve Camera rotation issue
+https://devtalk.nvidia.com/default/topic/1023180/jetson-tx2/imagenet-camera-gets-reverse-orientation-image-on-tx2-with-tr2-1/
+==============================================================================================
+
+
+
+8/5/2019
+
+Continued on the NVIDIA 'Hello AI World Exercise' with 'Classifying Images with ImageNet' section.  Tonight, I was able to take still images (JPG, PNG), run them through various existing Digital Neural Networks (DNN) that were downloaded as part of the exercise (like googlenet, alexnet, resnet-18, vgg-16), and see how each network identifies a still image.  I started with the pre-packaged images like the orange and granny smith apple against the googlenet, alexnet, and, resnet-18 networks.  The output was the original image with a stamp in the upper left corner with the percent certainty, and a label of what the network thinks the object is.  All of the pre-packaged images had strong probability numbers (80-100) and labels from each of the DNNs that matched what the image actually was.  
+
+I then got a little curious to try an image outside of the pre-packaged ones, so I downloaded an image of a lime from the web, and ran it through some of the DNNs (alextnet, googlenet, googlenet-12, resnet-18, resnet-50, vgg-16, and vgg-19) to see how each would perform.  None correctly identified the lime as a 'lime'.  I also read through the Terminal window to see if any of the non-winning classifications had 'lime', but none did.  In my opinion, the closest winning identifications were 'lemon' and 'fruit'.  Most networks identified the lime as granny smith apple, and one said 'fig'.  All output images of the lime were saved to the following directory:  /home/learner/Documents/Hello/jetson-inference/build/aarch64/bin with 'output_' as a prefix in the file name
+
+	Lime
+	----------------------------------
+	Alexnet - Granny Smith         64%
+	Googlenet - Fig                67%
+	Googlenet12 - Fruit            69%
+	Resnet-18 - Granny Smith       65%
+	Resnet-50 - Lemon              80%
+	vgg-16 - Granny Smith          31%
+	vgg-19 - Granny Smith          54%
+	----------------------------------
+
+
+Helpful Links:
+
+Github - NVIDIA - Hello AI World - Classifying Images with ImageNet
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/imagenet-console-2.md#using-the-console-program-on-jetson
+==============================================================================================
+
+
+
+8/6/2019
+
+Continued on the NVIDIA 'Hello AI World Exercise' with 'Coding Your Own Image Recognition Program (Python).  I followed along the various steps to add code to a new 'my-recognition.py' file, which takes an image defined by the user, loads it into memory, runs it through a DNN, then has the image classified with confidence %.  Instead of writing the output on a new image, the output is written in the Terminal window that was used to run the 'my-recognition.py' file.  It would be neat to add something to the printout statement that would include the name of the DNN used.  If I have time, I'll come back to this and try to make that happen.  I'm going to skip the C++ section which does the same thing, and move to the next section on using the live camera to identify objects.
+
+
+Helpful Links:
+
+Github - NVIDIA - Hello AI World - Coding Your Own Image Recognition Program (Python)
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/imagenet-example-python-2.md
+==============================================================================================
+
+
+
+8/9/2019
+
+Continued on the NVIDA 'Hello AI World Exercise' with Locating Objects with DetectNet.  In this exercise, PedNet was used to detect people in static images.  PedNet was easily able to place a bounding box on pedestrians in the sample data.  After going through the exercise with the sample data, I downloaded some images from the web and ran PedNet on them.  Images I selected included a cartoon drawing of people, a photograph of people spaced out (white space around them), a small group of people clustered together, and then a large group of people clustered together.  On the group pictures PedNet created big blue overlapping rectangles on the crowd.  All output images of the lime were saved to the following directory:  /home/learner/Documents/Hello/jetson-inference/build/aarch64/bin with 'output_' as a prefix in the file name
+
+I was surprised that PedNet was able to identify the cartoons as people in one of my images. Could a network be trained enough to recognize when something is a cartoon of a person, compared to a photograph of a person, instead of just calling each a 'person'?
+
+I later experimented with the 'coco-bottle' detection model.  After the one sample image, I downloaded images from the web that included a small brown bottle, a tall clear bottle, tall green wine bottle, group of clear plastic water bottles which were spaced out, three tall glass bottles that were spaced out (red, blue, clear), and one of filled Coke bottles spaced apart from each other.  For the small brown bottle, tall clear bottle, and green wine bottle, the bounding box had partial coverage.  For the group water bottle picture 4 of 6 had bounding boxes on them, but none of the boxes were 100% covered.  For the three tall bottles with each a different color, only a bounding box was on the red bottle (which was surprising since there was a clear bottle in the picture), and in the picture of the filled Coke bottles 5 of 6 bottles had boxes over them, but no box covered the entire bottle.
+
+Next, I moved on to the 'Running Live Camera Detection Demo' section with the 'coco-bottle' Detection model.  In front of the camera I placed a wooden turtle, a coffee mug, an aluminum can, a plastic Odwallla bottle, a clear pint drinking glass.  The strongest recognition was with the plastic Odwalla bottle, approximately covering 98% of the bottle.  The aluminum can flickered a bounding box on the top 2/3rds of the can, and the clear pint drinking glass had a box on the bottom 1/3
+
+I then moved on to the 'Transfer Learning with PyTorch' section.  When attempting the 'Verifying Pytorch' section, I discovered that I had not installed PyTorch as originally thought on 8/3.  Then, when attempting to actually install PyTorch for Python 3.6, I ran into an issue.  After the below ISSUE was resolved, the 'Verifying Pytorch' steps worked successfully.
+
+
+ISSUE:  I was not able to install PyTorch for Python 3.6 (or 2.7) when going through the 'install-pytorch.sh' tool.  Response from failed install was that I did not have the permissions to write to certain directories (/home/learner/.cache/pip/http/) or (/usr/local/lib/python 3.6/dist-packages/caffe2/).
+
+RESOLUTION:  PyTorch was successfully installed with two different actions.  First, I used the 'ls -al' command on the first directory, and discovered that it belonged to 'root' instead of 'learner' user.  In a terminal window, navigated to /home/learner/.cache and performed the following command sequence:
+	sudo su
+	<entered password for learner>
+	chown -R learner:learner pip
+	ls -al
+            
+             With the 'ls -al' command, verified that 'pip' now belonged to 'learner'.  The second action to resolve this ISSUE, was to install PyTorch as 'root'.  Using 'ls -al' on the second directory, I discovered that most of the folders there were owned by root.  Instead of changing the ownership to 'learner', ran the 'install-pytorch.sh' command as root with the following command:
+	sudo ./install-pytorch.sh
+
+
+Helpful Links:
+
+Github - NVIDIA - Hello AI World - Locating Objects with DetectNet
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/detectnet-console-2.md
+
+Github - NVIDIA - Hello AI World - Running the Live Camera Detection Demo
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/detectnet-camera-2.md
+
+Github - NVIDIA - Hello AI World - Transfer Learning with PyTorch
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/pytorch-transfer-learning.md
+==============================================================================================
+
+
+
+8/10/2019
+ 
+After resolving the PyTorch install issues, I started on the 'Re-training on the Cat/Dog Dataset' exercise as part of the NVIDIA Hello AI World tutorial.  This exercise takes a group of cat and dog images, and retrains the ResNet-18 recognition model (which was the default).  Ran into an ISSUE early on when attempting to run the 'python train.py....' command.
+
+
+ISSUE:  I was not able to run the 'python train.py --model-dir=cat_dog ~/Documents/datasets/cat_dog' command
+
+RESOLUTION:  Discovered that I need to enter 'python3 train.py --model-dir=cat_dog ~/Documents/datasets/cat_dog' command.  Once this was done with the added '3' after 'python', the training kicked off right away
+
+
+The model continued to train for approximately 2 hours.  After that, I exported the cat-dog model to a .onnx file and tested the new model on a few images with command line instructions.  
+
+My dataset for the retrained 'cat-dog' retraining can be found in the following directory:  /home/learner/Documents/datasets/cat_dog
+My retrained DNN model can be found in the following directory:  /home/learner/Documents/Hello/jetson-inference/python/training/imagenet/cat_dog/resnet18.onnx
+
+Due to time constraints, I skipped applying the model to the live camera, and the 'Re-training on the PlantCLEF dataset', and started reading through the 'Collecting your own Datasets' section.  At this point, I began to think about all of the tutorials I went through, what I have learned, and how I could apply them to my original recycling object recognition idea.  I decided that I would collect my own image dataset of recyclable and non-recyclable objects, re-train an existing Digital Neural Network (ResNet-18), create a new recognition model (.onnx), and see if my Test images of 'Recyclable' and 'Non-Recyclable' would be correctly identified through my newly created model.  I selected ResNet-18 since it was the default model used for the Cat/Dog retraining tutorial.
+
+After deciding on a way forward with my project, I did some math to determine how many pictures I would need to take of Recyclable and Non-Recyclable objects.  Based on the recommendations from the exercise, and time constraints, I decided on 200 Training images for each class ('Recycle' and 'Non-Recycle'), and 40 Validation images for each class (20% the size of each training set), and 100 Test images for each class (10 objects for each class, with ten different angled pictures for each object tested).  Next, I gathered objects around my apartment and categorized them into Recyclable and Non-Recyclable groups and took four pictures of each grouping (1 picture of Recyclable Training and Validation objects, 1 picture of Non-Recyclable Training and Validation objects, 1 picture of Recyclable objects for Test and 1 picture of Non-Recyclable objects for Test).
+
+Next, I moved on to data collection of taking pictures with the NVIDIA camera, but I quickly ran into an issue where I couldn't open the 'camera-capture' (Data Capture Control) tool.  I made many attempts to launch but was unsuccessful.
+
+
+Helpful Links:
+
+Github - Import Error: no module named torch #5563
+https://github.com/pytorch/pytorch/issues/5563
+
+Github - NVIDIA - Hello AI World - Retraining on the Cat/Dog Dataset
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/pytorch-cat-dog.md
+
+Github - NVIDIA - Hello AI World - Collecting your own Datasets
+https://github.com/dusty-nv/jetson-inference/blob/master/docs/pytorch-collect.md
+==============================================================================================
+
+
+
+8/11/2019
+
+Continued to have issues opening the 'Data Capture Control' tool for NVIDIA that will allow me to take pictures with the camera, and place them into the Validation, Training, or Testing directories.  Did not see the 'camera-capture' files saved in either the .../aarch64/bin or /usr/local/bin/ directories.  After awhile, I was able to find the solution:
+
+
+ISSUE:  I was not able to open the 'Data Capture Control' tool with the 'camera-capture' command, and 'camera-capture' files are missing from expected directories
+
+RESOLUTION:  Needed to download and install 'qtbase5-dev' package for the 'Data Capture Control' tool to work.  I opened a terminal window, and executed the following commands:
+
+	sudo apt-get install qtbase5-dev
+	cd jetson-inference/build
+	cmake ../
+	make
+	sudo make install
+  		
+	After following the above commands, navigated into both directories, and saw that 'camera-capture' files were there, and the 'Data Capture Control' tool launched
+
+With the 'Data Capture Control' tool up and working, I started to take pictures of objects, and save them into appropriate directories (Validation, Training, or Testing).  Objects were rotated and various pictures collected.  Some Test images for Recyclable and Non-Recyclable categories included objects that were the same from Training and Validation, or very similar.  After taking pictures all 680 pictures, I kicked off re-training on the resnet-18 DNN, and a new model was made.  Training took about 30 minutes since there were substantially less Training images than the Cat/Dog exercise.  The model was then exported to an .onnx file, and a couple of images were classified with the new model and the 'imagenet-console' command, to ensure that the probability and label (nonrecyclable or recyclable) were stamped on the output image.  Instead of performing a command line for each individual Test image for analysis, I plan on creating a Python script that will take Test images from a certain directory, and then run each through the nonrecycle_recycle model, and have output images placed in a different directory.
+
+
+Helpful Links:
+
+NVIDIA Developer Forum - Capture-camera does not work
+https://devtalk.nvidia.com/default/topic/1058515/capture-camera-does-not-work/
+==============================================================================================
+
+
+
+8/12/2019
+
+With all of my Test images collected, I continued to work on a demo.py script that would run each of my Test images through a model that would classify each image as either 'recycle' or 'non-recycle'.  No working file at the end of the night.  I will try it in pieces tomorrow and see if I can slowly build the script with code, test and check.  I did find a good many sources to help me build my demo.py file.  
+
+
+Helpful Links:
+
+Stack Overflow - Open File in Another Directory (Python)
+https://stackoverflow.com/questions/32470543/open-file-in-another-directory-python
+
+Real Python - Working with Files in Python
+https://realpython.com/working-with-files-in-python/#copying-moving-and-renaming-files-and-directories
+
+Chapter 9 - Organizing Files with Python
+https://automatetheboringstuff.com/chapter9/
+
+Python - File Path and CWD
+https://www.pitt.edu/~naraehan/python3/file_path_cwd.html
+
+Chapter 16 Automating common Tasks on your Computer with Python - 16.2
+https://www.pythonlearn.com/html-008/cfbook017.html
+
+Stack Overflow - How can I iterate over files in a given directory?
+https://stackoverflow.com/questions/10377998/how-can-i-iterate-over-files-in-a-given-directory
+==============================================================================================
+
+
+
+8/13/2019
+
+Continued to work on my demo.py file.  I was able to successfully cycle though a directory and identify image files in the input directory.  Next step is to move those files, and then re-name them, and then process them.  Not much headway tonight.  Will break things down into smaller parts tomorrow for quick small wins.  A project extension gave me more time to finish my project, perform some simple analysis, and a write-up my work.
+==============================================================================================
+
+
+
+8/14/2019
+
+Some big breakthroughs tonight with the coding of my demo.py file.  I was able to successfully copy just image files (.img, .png, .jpg, .jpeg) from one directory to another directory, and once moved, renamed each with a 'output_' prefix.  The last step of coding with the 'demo.py' file is to have each image 'output_' image run through the retrained resnet-18 DNN with my model (with imagenet-console and my .onnx file).  I'm not exactly happy with the code right in my demo.py right now, because it requires the demo.py file to be in the same directory as the input images.  I'm going to see if I can move the demo.py file to one directory 'outside' the input image directory and get it to work, AFTER I figure out how to have each image in the output directory processed through the classification model.  
+
+Other things about the demo.py are clunky that would need to be cleaned up with more time.  For example, re-running the demo.py file when there are already 'output_' images in there, adds another 'output_' prefix to each image so that filenames are, 'output_output_<filename>'.  Also, upon re-run, an additional image file is made?  Something funky with how the script cycles through itself on a re-run would need to be addressed.  I was also able to import the 'imagenet-console.py' file inside of another Python script, which will perform the classification on my Test images.
+
+
+Helpful Links:
+
+Python v2.7.16 documentation - List of Parameters and descriptions for 'os' module
+https://docs.python.org/2/library/os.html
+
+Python v3.0.1 documentation - List of Parameters and descriptions for 'os' module
+https://docs.python.org/3.0/library/os.html
+
+GeeksforGeeks - Details on Python dir() function
+https://www.geeksforgeeks.org/python-dir-function/
+
+Python Notes - Parameters for 'shutil' Python module
+https://thomas-cokelaer.info/tutorials/python/module_shutil.html
+
+Stack Overflow - How do I change directory (cd) in Python
+https://stackoverflow.com/questions/431684/how-do-i-change-directory-cd-in-python/24176022#24176022
+
+Stack Overflow - Run another Python script in different folder
+https://stackoverflow.com/questions/52577047/run-another-python-script-in-different-folder/52577217
+
+Stack Overflow - How can I make one python file run another
+https://stackoverflow.com/questions/7974849/how-can-i-make-one-python-file-run-another/7975511#7975511
+
+Stack Overflow - How to import a python file when the python file has a dash in the filename
+https://stackoverflow.com/questions/761519/is-it-ok-to-use-dashes-in-python-files-when-trying-to-import-them/37831973
+
+Stack Overflow - Python Module with dash, or hyphen (-) in its name
+https://stackoverflow.com/questions/7583652/python-module-with-a-dash-or-hyphen-in-its-name
+==============================================================================================
+
+
+
+8/15/2019
+
+I'm still stuck on coding my demo.py file which will process my Test images through the retrained model I created (.onnx).  I figured that importing the 'imagenet-console.py' file, and then 'hardcoding' the arguments behind it (like --model and --labels) will make it so the user doesn't have to enter them in the command line when running the 'demo.py' file.
+
+
+Helpful Links:
+
+Stack Abuse - Command Line Arguments in Python
+https://stackabuse.com/command-line-arguments-in-python/
+
+Tutorials Point - Python Command Line Arguments
+https://www.tutorialspoint.com/python/python_command_line_arguments.htm
+
+Programming with Python - Command-Line Programs
+https://swcarpentry.github.io/python-novice-inflammation/10-cmdline/
+
+Python - 3.3.7 Documentation - Standard Library - 16.4 argparse
+https://docs.python.org/3.3/library/argparse.html
+
+Python For Beginners - How to use sys.argv in Python
+https://www.pythonforbeginners.com/system/python-sys-argv
+==============================================================================================
+
+
+
+8/19/2019
+
+Worked more on the development of my demo.py file so that it can process images through my retrained network.  I opened up the 'imagenet-console.py' file that came with the 'NVIDIA Hello World AI' packages, and incorporated a lot of what was in there.  I decided to use the code in the 'imagenet-console.py' file into the 'demo.py' file, instead of importing the 'imagenet-console.py' file.  More tinkering tonight is needed to have copied images in the 'Images_Output' directory ('output_<filename>') processed through the classification network
+
+Helpful Links:
+
+Jetson.Inference Package Contents - Classes and info for detectNet and imageNet
+https://rawgit.com/dusty-nv/jetson-inference/python/docs/html/python/jetson.inference.html#imageNet 
+
+Tutorialspoint - Python Functions
+https://www.tutorialspoint.com/python/python_functions.htm
+
+W3 Schools.com - Python Functions
+https://www.w3schools.com/python/python_functions.asp
+==============================================================================================
+
+
+
+8/20/2019
+
+I spent more time coding my demo.py file with more guess and check on getting it to use/recognize my model (.onnx) file.  Not much on the web which shows similar examples with how others have used the '--model' argument for imageNet.  Most examples show how to parse out what a user types in a command window with arguments.  What I want to do works through a command line, but with 200 Test images to process, it would take too much time to process each with a typed command line. 
+==============================================================================================
+
+
+
+8/21/2019
+
+I continued to work on coding my demo.py file.  No breakthroughs with getting my images to process through my retrained model.  The 'demo.py' is still not reading my .onnx file.  It is reading from the default 'resnet-18' network and ignoring my model and label arguments that follow.  I've been stuck on this obstacle for quite some time with little progress.
+==============================================================================================
+
+
+
+8/25/2019
+
+I was not able to get my collected Test images processed through my .onnx file (retrained Resnet-18 DNN with recycled and non-recycled Validation and Training images).  At this point, I have to move forward and take my project in a different direction.  I decided to just classify my collected Test images (200) through the standard Resnet-18 DNN.  I successfully processed all 200 of my Test images (100 of recyclable images and 100 of non-recyclable images) through the standard 'resnet-18' DNN which took just over 3 minutes.  Because of the 2 minute processing requirement, I left only 100 Test images in the staged 'Input_Images' directory (50 recyclables and 50 non-recyclables), to cut the processing time to approximately 1 minute and 30 seconds.  So when the user executes the 'demo.py' file, only these 100 staged Test images are processed in the 'Images_Input' directory.  However, my analysis on the questions below covered all 200 of the Test images collected.
+
+With this change of plan, my project will now focus on two questions:
+
+   1)  Do images with higher certainty percentages result in a higher percentage of correct identifications, than those images with lower certainty percentages? - The idea is to see if a higher certainty of the DNN produced a higher percentage of correctly identifying objects
+
+   2)  Did straight upright pictures of an object result in a higher percentage of correct identifications, then pictures at different angles? - The idea is that most DNNs are trained with images that are straight and upright, and would yield a higher percentage of correct identifications
+
+
+All 200 images were cataloged and listed in the 'Analysis_Resnet18_8_15_2019.xlsx' spreadsheet.  Those rows highlighted in light green in the spreadsheet were not left in the 'Images_Import' directory.  Tomorrow I will create some Pivot Tables in Excel and analyze the numbers from the data.
+==============================================================================================
+
+
+
+8/26/2019
+
+In an Excel file, 'Analysis_Resnet18_8_15_2019.xlsx' all 200 images were logged with their true object name, and name as determined by the 'resnet-18' network, and percentage of certainty.  Analysis was performed on the data in the spreadsheet to examine the two questions above.  I also continued to update my text file, which will become my 'readme.md' file.  I had some issues uploading my files on to Github.  My free user profile doesn't seem to have enough space to upload my project (all of my images, python file, and supporting files).  I will find out how best to upload.
+==============================================================================================
+
+
+
+8/28/2019
+
+I just finished uploading the last few files to my Github profile.  Looking back and re-reading some of my journal entries, it's amazing to see how far I've come in a month.  When I was handed this board, I had no idea what to do with it, and now a month later, I know how to collect data with it, run image data through various networks, and tinker with models that use the live camera or still imagery.
+
+Tomorrow I turn in my board, which will eventually pass into the hands of someone else who will find new uses and make new discoveries.  What a journey!
+==============================================================================================
+
+
+
+
+
+
+
+
+
+
+
